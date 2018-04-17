@@ -72,7 +72,7 @@
             ]
         }, {
             "nodeType": "apache",
-            "path": "${SYSTEM_ETC}/php.ini",
+            "path": "/etc/php.ini",
             "replacements": [
                 {
                     "pattern": ";extension=imap.so",
