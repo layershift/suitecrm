@@ -8,7 +8,7 @@
 		"type": "php",
 		"homepage": "https://suitecrm.com/",
 		"categories": ["apps/crm", "apps/sales-and-marketing"],
-		"logo": "https://raw.githubusercontent.com/layershift/suitecrm/master/images/suite.png",
+		"logo": "https://raw.githubusercontent.com/layershift/suitecrm/master/images/suite.jpg",
 		"description": {
 			"text": "SuiteCRM automates your core sales, customer service and marketing processes. It fuses simplicity, mobility, and social aspects of your app with the business process optimization of conventional CRM"
 		},
