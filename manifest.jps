@@ -1,101 +1,101 @@
 {
-	"jpsType": "install",
-	"jpsVersion": "0.2",
-	"application": {
-		"id": "suitecrm",
-		"name": "SuiteCRM",
-		"version": "7.10.4",
-		"type": "php",
-		"homepage": "https://suitecrm.com/",
-		"categories": ["apps/crm", "apps/sales-and-marketing"],
-		"logo": "https://raw.githubusercontent.com/layershift/suitecrm/master/images/suite.jpg",
-		"description": {
-			"text": "SuiteCRM automates your core sales, customer service and marketing processes. It fuses simplicity, mobility, and social aspects of your app with the business process optimization of conventional CRM"
-		},
-		"nodes": [
-            {
-                "nodeType": "apache",
-                "nodeGroup":"cp",
-                "count":1,
-                "restartDelay":30,
-                "diskLimit":50,
-                "extip":0,
-                "extipv6":0,
-                "tag":"2.4.6-php-7.1.7",
-                "fixedCloudlets":1,
-                "flexibleCloudlets":16
-			},
-            {
-                "nodeType":"mysql",
-                "nodeGroup":"sqldb",
-                "count":1,
-                "restartDelay":30,
-                "diskLimit":50,
-                "extip":0,
-                "extipv6":0,
-                "tag":"5.7.19",
-                "fixedCloudlets":1,
-                "flexibleCloudlets":16
+    "jpsType": "install",
+    "jpsVersion": "0.2",
+    "id": "suitecrm",
+    "name": "SuiteCRM",
+    "version": "7.10.4",
+    "type": "php",
+    "homepage": "https://suitecrm.com/",
+    "categories": ["apps/crm", "apps/sales-and-marketing"],
+    "logo": "https://raw.githubusercontent.com/layershift/suitecrm/master/images/suite.jpg",
+    "description": {
+        "text": "SuiteCRM automates your core sales, customer service and marketing processes. It fuses simplicity, mobility, and social aspects of your app with the business process optimization of conventional CRM"
+    },
+    "nodes": [
+        {
+            "nodeType": "apache",
+            "nodeGroup":"cp",
+            "count":1,
+            "restartDelay":30,
+            "diskLimit":50,
+            "extip":0,
+            "extipv6":0,
+            "tag":"2.4.6-php-7.1.7",
+            "fixedCloudlets":1,
+            "flexibleCloudlets":16
+        },
+        {
+            "nodeType":"mysql",
+            "nodeGroup":"sqldb",
+            "count":1,
+            "restartDelay":30,
+            "diskLimit":50,
+            "extip":0,
+            "extipv6":0,
+            "tag":"5.7.19",
+            "fixedCloudlets":1,
+            "flexibleCloudlets":16
+        }
+    ],
+    "deployments": [
+        {
+            "nodeType": "apache",
+            "context": "ROOT",
+            "name": "SuiteCRM-7.10.4",
+            "archive": "https://raw.githubusercontent.com/layershift/suitecrm/master/dumps/SuiteCRM-7.10.4.zip"
+        }
+    ],
+    "configs": [
+        {
+            "nodeType": "mysql",
+            "database": {
+                "dump": "https://raw.githubusercontent.com/layershift/suitecrm/master/dumps/suitecrm.sql",
+                "name": "suitecrm",
+                "user": "suitecrm",
+                "password": "${user.appPassword}",
+                "patch": "UPDATE suitecrm.users SET user_hash = user_hash = MD5('${user.appPassword}') WHERE user_name = 'admin';"
             }
-        ],
-			"deployments": [{
-					"nodeType": "apache",
-					"context": "ROOT",
-					"name": "SuiteCRM-7.10.4",
-					"archive": "https://raw.githubusercontent.com/layershift/suitecrm/master/dumps/SuiteCRM-7.10.4.zip"
-				}
-			],
-			"configs": [{
-					"nodeType": "mysql",
-					"database": {
-						"dump": "https://raw.githubusercontent.com/layershift/suitecrm/master/dumps/suitecrm.sql",
-						"name": "suitecrm",
-						"user": "suitecrm",
-                        "password": "${user.appPassword}",
-                        "patch": "UPDATE suitecrm.users SET user_hash = user_hash = MD5('${user.appPassword}') WHERE user_name = 'admin';"
-					}
-				}, {
-					"nodeType": "apache",
-					"path": "/var/www/webroot/ROOT/config.php",
-					"replacements": [{
-							"replacement": "${nodes.mysql.address}",
-							"pattern": "{DB_HOST}"
-						}, {
-							"replacement": "${env.url}",
-							"pattern": "{DOMAIN_NAME}"
-						}, {
-							"replacement": "${user.appPassword}",
-							"pattern": "{DATABASE_PASSWORD}"
-						}
-					]
-				}, {
-					"nodeMission": "cp",
-					"path": "${SYSTEM_ETC}/php.ini",
-					"replacements": [{
-							"pattern": ";extension=imap.so",
-							"replacement": "extension=imap.so"
-						}, {
-							"pattern": ";extension=gd.so",
-							"replacement": "extension=gd.so"
-						}, {
-							"pattern": "post_max_size = 8M          ; Maximum size of POST data that PHP will accept.",
-							"replacement": "post_max_size = 128M"
-						}, {
-							"pattern": "memory_limit = 128M         ; will be overriden if using php-fpm, see php_admin_value[memory_limit] in php-fpm.conf",
-							"replacement": "memory_limit = 512M"
-						}, {
-							"pattern": "upload_max_filesize = 2M",
-							"replacement": "upload_max_filesize = 128M"
-						}
-					],
-					"restart": true
-				}
-			],
-			"restart": true
-		},
-		"success": {
-			"text": "Admin panel URL: <a href='${env.url}' target='_blank'>${env.url}</a><br/>Username: admin<br/>Password: ${user.appPassword}",
-			"mail": "Admin panel URL: <a href='${env.url}' target='_blank'>${env.url}</a><br/>Username: admin<br/>Password: ${user.appPassword}"
-		}
-	}
+        }, {
+            "nodeType": "apache",
+            "path": "/var/www/webroot/ROOT/config.php",
+            "replacements": [
+                {
+                    "replacement": "${nodes.mysql.address}",
+                    "pattern": "{DB_HOST}"
+                }, {
+                    "replacement": "${env.url}",
+                    "pattern": "{DOMAIN_NAME}"
+                }, {
+                    "replacement": "${user.appPassword}",
+                    "pattern": "{DATABASE_PASSWORD}"
+                }
+            ]
+        }, {
+            "nodeType": "apache",
+            "path": "${SYSTEM_ETC}/php.ini",
+            "replacements": [
+                {
+                    "pattern": ";extension=imap.so",
+                    "replacement": "extension=imap.so"
+                }, {
+                    "pattern": ";extension=gd.so",
+                    "replacement": "extension=gd.so"
+                }, {
+                    "pattern": "post_max_size = 8M          ; Maximum size of POST data that PHP will accept.",
+                    "replacement": "post_max_size = 128M"
+                }, {
+                    "pattern": "memory_limit = 128M         ; will be overriden if using php-fpm, see php_admin_value[memory_limit] in php-fpm.conf",
+                    "replacement": "memory_limit = 512M"
+                }, {
+                    "pattern": "upload_max_filesize = 2M",
+                    "replacement": "upload_max_filesize = 128M"
+                }
+            ],
+            "restart": true
+        }
+    ],
+    "success": {
+        "text": "Admin panel URL: <a href='${env.url}' target='_blank'>${env.url}</a><br/>Username: admin<br/>Password: ${user.appPassword}",
+        "mail": "Admin panel URL: <a href='${env.url}' target='_blank'>${env.url}</a><br/>Username: admin<br/>Password: ${user.appPassword}"
+    }
 }
