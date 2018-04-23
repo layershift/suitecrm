@@ -95,7 +95,6 @@
         }
     ],
     "success": {
-        "text": "Admin panel URL: <a href='${env.url}' target='_blank'>${env.url}</a><br/>Username: admin<br/>Password: ${user.appPassword}",
-        "mail": "Admin panel URL: <a href='${env.url}' target='_blank'>${env.url}</a><br/>Username: admin<br/>Password: ${user.appPassword}"
+        "text": "Admin panel URL: <a href='${env.url}' target='_blank'>${env.url}</a><br>Username: admin<br>Password: ${user.appPassword}"
     }
 }
