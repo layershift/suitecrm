@@ -53,7 +53,7 @@
                 "name": "suitecrm",
                 "user": "suitecrm",
                 "password": "${user.appPassword}",
-                "patch": "SET PASSWORD FOR 'suitecrm'@'%' = PASSWORD('${user.appPassword}'); UPDATE suitecrm.users SET user_hash = user_hash = MD5('${user.appPassword}') WHERE user_name = 'admin';"
+                "patch": "SET PASSWORD FOR 'suitecrm'@'%' = PASSWORD('${user.appPassword}'); UPDATE suitecrm.users SET user_hash = MD5('${user.appPassword}') WHERE id = 1;"
             }
         }, {
             "nodeType": "apache",
