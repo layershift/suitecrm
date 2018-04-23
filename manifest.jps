@@ -47,12 +47,13 @@
     ],
     "configs": [
         {
+            "nodeType": "mysql",
             "database": {
                 "dump": "https://raw.githubusercontent.com/layershift/suitecrm/master/dumps/suitecrm.sql",
                 "name": "suitecrm",
                 "user": "suitecrm",
                 "password": "${user.appPassword}",
-                "patch": "UPDATE suitecrm.users SET user_hash = user_hash = MD5('${user.appPassword}') WHERE user_name = 'admin';"
+                "patch": "SET PASSWORD FOR 'suitecrm'@'%' = PASSWORD('${user.appPassword}'); UPDATE suitecrm.users SET user_hash = user_hash = MD5('${user.appPassword}') WHERE user_name = 'admin';"
             }
         }, {
             "nodeType": "apache",
