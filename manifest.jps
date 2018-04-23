@@ -47,7 +47,6 @@
     ],
     "configs": [
         {
-            "nodeType": "mysql",
             "database": {
                 "dump": "https://raw.githubusercontent.com/layershift/suitecrm/master/dumps/suitecrm.sql",
                 "name": "suitecrm",
