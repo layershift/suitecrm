@@ -26,3 +26,10 @@ DB                   |    MySQL      |       1                        |         
 **PHP Engine**: PHP 7.1.7<br/>
 **MySQL Database**: 5.7.19
 
+## Deployment
+
+[![Deploy to Layershift Jelastic PaaS](images/layershift-install-3.png)](http://jps.layershift.com/suitecrm/deploy.html)
+
+# LICENSE
+
+Licensed under GNU LGPLv3
