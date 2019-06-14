@@ -13,18 +13,18 @@ It fuses simplicity, mobility, and social aspects of your app with the business 
 
 ### Specifics
 
-Layer                |     Server    | Number of CTs <br/> by default | Cloudlets per CT <br/> (reserved/dynamic) | Options
--------------------- | --------------| :----------------------------: | :---------------------------------------: | :-----:
-AS                   | Apache 2 (MOD_PHP) |       1                        |           1 / 16                          | -
-DB                   |    MySQL      |       1                        |           1 / 16                           | -
+Layer                |         Server         | Number of CTs <br/> by default | Cloudlets per CT <br/> (reserved/dynamic) | Options
+-------------------- | ---------------------- | :----------------------------: | :---------------------------------------: | :-----:
+AS                   | Nginx 1.16.0 php-fpm   |       1                        |           1 / 16                          | -
+DB                   | Mariadb 10.3.15        |       1                        |           1 / 8                           | -
 
 * AS - Application server 
 * DB - Database 
 * CT - Container
 
-**suiteCRM Version**: 7.10.4<br/>
-**PHP Engine**: PHP 7.1.7<br/>
-**MySQL Database**: 5.7.19
+**suiteCRM Version**: 7.11.5<br/>
+**PHP Engine**: PHP 7.3.3<br/>
+**MariaDB Database**: 10.3.15
 
 ## Deployment
 

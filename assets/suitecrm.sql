@@ -3554,7 +3554,7 @@ CREATE TABLE `email_addresses` (
 
 LOCK TABLES `email_addresses` WRITE;
 /*!40000 ALTER TABLE `email_addresses` DISABLE KEYS */;
-INSERT INTO `email_addresses` VALUES ('6aebd213-d6e7-291e-0e77-5ad5f52961e6','bart@layershift.me','BART@LAYERSHIFT.ME',0,0,'not-opt-in',NULL,NULL,NULL,NULL,'2018-04-17 13:23:34','2018-04-17 13:23:34',0);
+INSERT INTO `email_addresses` VALUES ('6aebd213-d6e7-291e-0e77-5ad5f52961e6','admin@example.com','admin@example.com',0,0,'not-opt-in',NULL,NULL,NULL,NULL,'2018-04-17 13:23:34','2018-04-17 13:23:34',0);
 /*!40000 ALTER TABLE `email_addresses` ENABLE KEYS */;
 UNLOCK TABLES;
 

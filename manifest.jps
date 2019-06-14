@@ -1,100 +1,68 @@
-{
-    "jpsType": "install",
-    "jpsVersion": "0.2",
-    "id": "suitecrm",
-    "name": "SuiteCRM",
-    "version": "7.10.4",
-    "type": "php",
-    "homepage": "https://suitecrm.com/",
-    "categories": ["apps/crm", "apps/sales-and-marketing"],
-    "logo": "https://raw.githubusercontent.com/layershift/suitecrm/master/images/suite.jpg",
-    "description": {
-        "text": "SuiteCRM automates your core sales, customer service and marketing processes. It fuses simplicity, mobility, and social aspects of your app with the business process optimization of conventional CRM"
-    },
-    "nodes": [
-        {
-            "nodeType": "apache",
-            "nodeGroup":"cp",
-            "count":1,
-            "restartDelay":30,
-            "diskLimit":50,
-            "extip":0,
-            "extipv6":0,
-            "tag":"2.4.6-php-7.1.7",
-            "fixedCloudlets":1,
-            "flexibleCloudlets":16
-        },
-        {
-            "nodeType":"mysql",
-            "nodeGroup":"sqldb",
-            "count":1,
-            "restartDelay":30,
-            "diskLimit":50,
-            "extip":0,
-            "extipv6":0,
-            "tag":"5.7.19",
-            "fixedCloudlets":1,
-            "flexibleCloudlets":16
-        }
-    ],
-    "deployments": [
-        {
-            "nodeType": "apache",
-            "context": "ROOT",
-            "name": "SuiteCRM-7.10.4",
-            "archive": "https://raw.githubusercontent.com/layershift/suitecrm/master/dumps/SuiteCRM-7.10.4.zip"
-        }
-    ],
-    "configs": [
-        {
-            "nodeType": "mysql",
-            "database": {
-                "dump": "https://raw.githubusercontent.com/layershift/suitecrm/master/dumps/suitecrm.sql",
-                "name": "suitecrm",
-                "user": "suitecrm",
-                "password": "${user.appPassword}",
-                "patch": "SET PASSWORD FOR 'suitecrm'@'%' = PASSWORD('${user.appPassword}'); UPDATE suitecrm.users SET user_hash = MD5('${user.appPassword}') WHERE id = 1;"
-            }
-        }, {
-            "nodeType": "apache",
-            "path": "/var/www/webroot/ROOT/config.php",
-            "replacements": [
-                {
-                    "replacement": "${nodes.mysql.address}",
-                    "pattern": "{DB_HOST}"
-                }, {
-                    "replacement": "${env.url}",
-                    "pattern": "{DOMAIN_NAME}"
-                }, {
-                    "replacement": "${user.appPassword}",
-                    "pattern": "{DATABASE_PASSWORD}"
-                }
-            ]
-        }, {
-            "nodeType": "apache",
-            "path": "/etc/php.ini",
-            "replacements": [
-                {
-                    "pattern": ";extension=imap.so",
-                    "replacement": "extension=imap.so"
-                }, {
-                    "pattern": ";extension=gd.so",
-                    "replacement": "extension=gd.so"
-                }, {
-                    "pattern": "post_max_size = 8M          ; Maximum size of POST data that PHP will accept.",
-                    "replacement": "post_max_size = 128M"
-                }, {
-                    "pattern": "memory_limit = 128M         ; will be overriden if using php-fpm, see php_admin_value[memory_limit] in php-fpm.conf",
-                    "replacement": "memory_limit = 512M"
-                }, {
-                    "pattern": "upload_max_filesize = 2M",
-                    "replacement": "upload_max_filesize = 128M"
-                }
-            ],
-            "restart": true
-        }
-    ],
-    "success": {
-        "text": "Admin panel URL: <a href='${env.url}' target='_blank'>${env.url}</a><br>Username: admin<br>Password: ${user.appPassword}"
-    }
-}
+jpsType: install
+jpsVersion: '1.1'
+id: suitecrm
+name: SuiteCRM
+categories:
+  - apps/crm
+  - apps/sales-and-marketing
+logo: https://raw.githubusercontent.com/layershift/suitecrm/master/images/suite.jpg
+homepage: https://suitecrm.com/
+description: SuiteCRM automates your core sales, customer service and marketing processes. It fuses simplicity, mobility, and social aspects of your app with the business process optimization of conventional CRM
+baseUrl: https://raw.githubusercontent.com/layershift/suitecrm/master
+
+globals:
+  DB_USER: jelastic-${fn.random}
+  DB_PASS: ${fn.password(20)}
+  ADMIN_PASSWD: ${fn.password(20)}
+
+ssl: true
+nodes:
+  - nodeType: nginxphp-dockerized
+    tag: 1.16.0-php-7.3.5
+    count: 1
+    cloudlets: 16
+    env:
+      SERVER_WEBROOT: /var/www/webroot
+
+  - nodeType: mariadb10
+    tag: 10.3.15
+    count: 1
+    cloudlets: 8
+  
+onInstall:
+  installSuiteCRM
+  
+actions:
+  installSuiteCRM:
+    - cmd[sqldb]: |-
+        mysql -uroot -p${nodes.sqldb.password} -e "CREATE DATABASE IF NOT EXISTS suitecrm;"
+        mysql -uroot -p${nodes.sqldb.password} -e "CREATE USER '${globals.DB_USER}'@'%' IDENTIFIED BY '${globals.DB_PASS}'; GRANT ALL ON suitecrm.* TO '${globals.DB_USER}'@'%'; FLUSH PRIVILEGES;"
+        wget -P ~/ https://raw.githubusercontent.com/layershift/suitecrm/master/assets/suitecrm.sql
+        mysql -uroot -p${nodes.sqldb.password} suitecrm < ~/suitecrm.sql
+        mysql -uroot -p${nodes.sqldb.password} -e "UPDATE suitecrm.users SET user_hash = MD5('${globals.ADMIN_PASSWD}') WHERE id = 1;"
+        mysql -uroot -p${nodes.sqldb.password} -e "UPDATE suitecrm.email_addresses SET email_address = '${user.email}', email_address_caps = '${user.email}' where id='6aebd213-d6e7-291e-0e77-5ad5f52961e6'"
+
+    - deploy:
+        archive: https://raw.githubusercontent.com/layershift/suitecrm/master/assets/SuiteCRM-7.11.5.zip
+        name: SuiteCRM-7.11.5.zip
+        context: ROOT
+
+    - cmd[cp]: |-
+        sed -i "s/;extension=imap.so/extension=imap.so/"  /etc/php.ini;
+        sed -i "s/;extension=imap.so/extension=imap.so/"  /etc/php.ini;
+        sed -i "s/;extension=gd.so/extension=gd.so/"  /etc/php.ini;
+        sed -i "s/post_max_size = 100M/post_max_size = 128M/"  /etc/php.ini;
+        sed -i "s/memory_limit = 128M/memory_limit = 512M/"  /etc/php.ini;	
+        sed -i "s/upload_max_filesize = 100M/upload_max_filesize = 128M/"  /etc/php.ini;
+        /etc/init.d/nginx restart;
+        wget -O ${SERVER_WEBROOT}/ROOT/config.php https://raw.githubusercontent.com/layershift/suitecrm/master/assets/config.php;
+        chown nginx.nginx ${SERVER_WEBROOT}/ROOT/config.php;
+        sed -i 's#sampledbhost#${nodes.sqldb.address}#' ${SERVER_WEBROOT}/ROOT/config.php;
+        sed -i 's#sampledbuser#${globals.DB_USER}#' ${SERVER_WEBROOT}/ROOT/config.php;
+        sed -i 's#sampledbpass#${globals.DB_PASS}#' ${SERVER_WEBROOT}/ROOT/config.php;
+        sed -i 's#samplehostname#${env.url}#' ${SERVER_WEBROOT}/ROOT/config.php;
+        sed -i 's#samplesiteurl#${env.url}#' ${SERVER_WEBROOT}/ROOT/config.php;
+        echo -e "*    *    *    *    *     cd /var/www/webroot/ROOT; php -f cron.php > /dev/null 2>&1\n" >> /var/spool/cron/nginx;
+      user : root
+
+success: /assets/success.md
